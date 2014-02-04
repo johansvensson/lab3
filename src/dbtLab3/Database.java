@@ -48,7 +48,7 @@ public class Database {
 		return true;
 	}
 
-	/**
+	/** 
 	 * Close the connection to the database.
 	 */
 	public void closeConnection() {
