@@ -48,7 +48,7 @@ public class Database {
 		return true;
 	}
 
-	/** 
+	/**
 	 * Close the connection to the database.
 	 */
 	public void closeConnection() {
@@ -70,8 +70,37 @@ public class Database {
 		return conn != null;
 	}
 
+	public void loginUser(String userId) {
+
+		PreparedStatement ps = null;
+		// Creates a PreparedStatemet from the String
+		try {
+			String sql = "select name from users where username = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+
+			ResultSet rs = ps.executeQuery();
+			System.out.print(rs.getString(1));
+
+			if (rs.next()) {
+				CurrentUser.instance().loginAs(userId);
+			}
+
+		} catch (SQLException e1) {
+			System.out.println("An error has accured");
+			e1.printStackTrace();
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 	/* --- insert own code here --- */
-	public Connection getConnection(){
+	public Connection getConnection() {
 		return conn;
 	}
 
