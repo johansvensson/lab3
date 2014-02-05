@@ -75,17 +75,18 @@ public class Database {
 		PreparedStatement ps = null;
 		// Creates a PreparedStatemet from the String
 		try {
-			String sql = "select name from users where username = ?";
+			String sql = "select username,name from users where username = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, userId);
 
 			ResultSet rs = ps.executeQuery();
-			System.out.print(rs.getString(1));
-
 			if (rs.next()) {
-				CurrentUser.instance().loginAs(userId);
+				CurrentUser.instance().loginAs(rs.getString("username"));
 			}
-
+			System.out
+					.println("Now is "
+							+ CurrentUser.instance().getCurrentUserId()
+							+ " logged in!");
 		} catch (SQLException e1) {
 			System.out.println("An error has accured");
 			e1.printStackTrace();
