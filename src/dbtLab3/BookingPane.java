@@ -164,7 +164,6 @@ public class BookingPane extends BasicPane {
 		clearMessage();
 		currentUserNameLabel.setText(CurrentUser.instance().getCurrentUserId());
 		fillNameList();
-		clearFields();
 	}
 
 	/**
@@ -173,6 +172,9 @@ public class BookingPane extends BasicPane {
 	private void fillNameList() {
 		nameListModel.removeAllElements();
         /* --- insert own code here --- */
+		DefaultListModel<String> result = db.getMovies();
+		//TODO Fungerar ner hit. Listan result är bra, måste bara få in det i GUIt.
+		nameListModel = result;
 	}
 
 	/**

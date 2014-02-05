@@ -2,6 +2,8 @@ package dbtLab3;
 
 import java.sql.*;
 
+import javax.swing.DefaultListModel;
+
 /**
  * Database is a class that specifies the interface to the movie database. Uses
  * JDBC and the MySQL Connector/J driver.
@@ -103,6 +105,33 @@ public class Database {
 	/* --- insert own code here --- */
 	public Connection getConnection() {
 		return conn;
+	}
+
+	public DefaultListModel<String> getMovies() {
+		PreparedStatement ps = null;
+
+		try {
+			String sql = "Select * from movie";
+			ps = conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			DefaultListModel<String> result = new DefaultListModel<String>();
+			while (rs.next()) {
+				result.addElement(rs.getString("movieName"));
+				System.out.println(rs.getString("movieName"));
+			}
+			return result;
+
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return null;
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 }
