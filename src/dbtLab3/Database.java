@@ -71,5 +71,8 @@ public class Database {
 	}
 
 	/* --- insert own code here --- */
+	public Connection getConnection(){
+		return conn;
+	}
 
 }

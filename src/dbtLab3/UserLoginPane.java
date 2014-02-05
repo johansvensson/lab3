@@ -1,7 +1,9 @@
 package dbtLab3;
 
 import javax.swing.*;
+
 import java.awt.event.*;
+import java.sql.*;
 
 /**
  * The GUI pane where a new user logs in. Contains a text field where the user
@@ -83,6 +85,36 @@ public class UserLoginPane extends BasicPane {
 		public void actionPerformed(ActionEvent e) {
 			String userId = fields[USER_ID].getText();
 			/* --- insert own code here --- */
+			Connection conn = db.getConnection();
+			String sql = "select * from users where username = ?";
+			PreparedStatement ps = null;
+			// Creates a PreparedStatemet from the String
+			try {
+				ps = conn.prepareStatement(sql);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			// Insert userId into the PreparedStatement
+			try {
+				ps.setString(1, userId);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			// Execute the PreparedStatement and se how many rows it returns
+			int rows = 0;
+			try {
+				rows = ps.executeUpdate();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			if(rows == 1){
+				//CurrentUser cu = new CurrentUser();
+				//TODO Fixa så att CurrentUser får tag i userId.
+				
+				
+				
+			}
+			
 			
 		}
 	}
