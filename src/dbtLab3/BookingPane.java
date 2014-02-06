@@ -175,6 +175,7 @@ public class BookingPane extends BasicPane {
 		DefaultListModel<String> result = db.getMovies();
 		//TODO Fungerar ner hit. Listan result är bra, måste bara få in det i GUIt.
 		nameListModel = result;
+		
 	}
 
 	/**
