@@ -118,6 +118,7 @@ public class Database {
 			ArrayList<String> result = new ArrayList<String>();
 			while (rs.next()) {
 				result.add(rs.getString("movieName"));
+				
 				System.out.println(rs.getString("movieName"));
 			}
 			return result;
@@ -133,6 +134,35 @@ public class Database {
 			}
 		}
 
+	}
+
+	public ArrayList<String> getDates(String moviename) {
+		PreparedStatement ps = null;
+
+		try {
+			String sql = "Select * from performance where movieName = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, moviename);
+			ResultSet rs = ps.executeQuery();
+			ArrayList<String> result = new ArrayList<String>();
+			int counter = 0;
+			while (rs.next()) {
+				
+				result.add(rs.getNString(counter));
+				;
+			}
+			return result;
+
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return null;
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
