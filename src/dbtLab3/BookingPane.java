@@ -5,6 +5,7 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * The GUI pane where a user books tickets for movie performances. It contains
@@ -172,9 +173,11 @@ public class BookingPane extends BasicPane {
 	private void fillNameList() {
 		nameListModel.removeAllElements();
         /* --- insert own code here --- */
-		DefaultListModel<String> result = db.getMovies();
+		ArrayList<String> result = db.getMovies();
 		//TODO Fungerar ner hit. Listan result är bra, måste bara få in det i GUIt.
-		nameListModel = result;
+		for(String n: result){
+			nameListModel.addElement(n);
+		}
 		
 	}
 

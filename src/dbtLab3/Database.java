@@ -1,6 +1,7 @@
 package dbtLab3;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 
@@ -107,16 +108,16 @@ public class Database {
 		return conn;
 	}
 
-	public DefaultListModel<String> getMovies() {
+	public ArrayList<String> getMovies() {
 		PreparedStatement ps = null;
 
 		try {
 			String sql = "Select * from movie";
 			ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
-			DefaultListModel<String> result = new DefaultListModel<String>();
+			ArrayList<String> result = new ArrayList<String>();
 			while (rs.next()) {
-				result.addElement(rs.getString("movieName"));
+				result.add(rs.getString("movieName"));
 				System.out.println(rs.getString("movieName"));
 			}
 			return result;
