@@ -112,13 +112,13 @@ public class Database {
 		PreparedStatement ps = null;
 
 		try {
-			String sql = "Select * from movie";
+			String sql = "Select moviename from performance group by moviename";
 			ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			ArrayList<String> result = new ArrayList<String>();
 			while (rs.next()) {
 				result.add(rs.getString("movieName"));
-				
+
 				System.out.println(rs.getString("movieName"));
 			}
 			return result;
@@ -138,18 +138,18 @@ public class Database {
 
 	public ArrayList<String> getDates(String moviename) {
 		PreparedStatement ps = null;
-
+		System.out.println("Selected movie is: " + moviename);
 		try {
-			String sql = "Select * from performance where movieName = ?";
+			String sql = "Select datum from performance where movieName = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, moviename);
 			ResultSet rs = ps.executeQuery();
 			ArrayList<String> result = new ArrayList<String>();
-			int counter = 0;
 			while (rs.next()) {
-				
-				result.add(rs.getNString(counter));
-				;
+				Date datum = rs.getDate("datum");
+				result.add(datum.toString());
+				System.out.println(rs.getString("datum"));
+
 			}
 			return result;
 
@@ -165,4 +165,42 @@ public class Database {
 		}
 	}
 
+	public int getAvailableSeats(String moviename, String date) {
+
+		PreparedStatement ps = null;
+		try {
+			String sql = "select count(resnbr) as booked, nbrofseats from ticket, theater where theatername = "+
+		"(select theatername from performance where moviename = ? and datum = ?) and moviename = ? and datum = ?";
+
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, moviename);
+			ps.setString(2, date);
+			ps.setString(3, moviename);
+			ps.setString(4, date);
+			ResultSet rs = ps.executeQuery();
+			int result = 0;
+			if (rs.next()) {
+				result = rs.getInt("nbrofseats") - rs.getInt("booked");
+			}
+			return result;
+
+		} catch (SQLException e1) {	
+			e1.printStackTrace();
+			return (Integer) null;
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException e) {	
+				e.printStackTrace();
+			}
+		}
+
+	
+	public String getTheater(String moviename, String date){
+	
+	
+	
+	}
+	
+	}
 }
