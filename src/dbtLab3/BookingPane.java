@@ -173,9 +173,9 @@ public class BookingPane extends BasicPane {
 	 */
 	private void fillNameList() {
 		nameListModel.removeAllElements();
-        /* --- insert own code here --- */
+		/* --- insert own code here --- */
 		ArrayList<String> movies = db.getMovies();
-		for (String s : movies){
+		for (String s : movies) {
 			nameListModel.addElement(s);
 		}
 	}
@@ -186,9 +186,9 @@ public class BookingPane extends BasicPane {
 	 */
 	private void fillDateList(String movieName) {
 		dateListModel.removeAllElements();
-        /* --- insert own code here --- */
+		/* --- insert own code here --- */
 		ArrayList<String> dates = db.getDates(movieName);
-		for (String d : dates){
+		for (String d : dates) {
 			dateListModel.addElement(d);
 		}
 	}
@@ -220,6 +220,7 @@ public class BookingPane extends BasicPane {
 			}
 			String movieName = nameList.getSelectedValue();
 			/* --- insert own code here --- */
+			messageLabel.setText("");
 			fillDateList(movieName);
 		}
 	}
@@ -243,18 +244,19 @@ public class BookingPane extends BasicPane {
 			String movieName = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
 			/* --- insert own code here --- */
-			clearFields();	
+			clearFields();
+			messageLabel.setText(" ");
 			fields[0].setText(movieName);
 			fields[1].setText(date);
 			Performance perf = db.getDetails(movieName, date);
 			fields[2].setText(perf.getTheaterName());
-			
+
 			Integer available = (perf.nbrofSeats() - db.getNbrOfTickets(perf));
 			if (available < 1) {
 				fields[3].setText("Event fullbokat");
-			}else {
-			fields[3].setText(available.toString());
-		}
+			} else {
+				fields[3].setText(available.toString());
+			}
 		}
 	}
 
@@ -281,9 +283,23 @@ public class BookingPane extends BasicPane {
 			String movieName = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
 			/* --- insert own code here --- */
-			// put lock on whole session with "for update" 
-			// update number of available seats
-			
+			Performance perf = db.getDetails(movieName, date);
+			int resnbr = db.bookTicket(perf);
+
+			System.out.println(resnbr + "resnbr from bookticket");
+			if (resnbr == 0) {
+				messageLabel.setText("Could not book ticket");
+			} else {
+				messageLabel.setText("Your booking number is " + resnbr);
+			}
+
+			Integer available = (perf.nbrofSeats() - db.getNbrOfTickets(perf));
+			if (available < 1) {
+				fields[3].setText("Event fullbokat");
+			} else {
+				fields[3].setText(available.toString());
+			}
 		}
+
 	}
 }

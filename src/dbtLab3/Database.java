@@ -89,7 +89,6 @@ public class Database {
 							+ CurrentUser.instance().getCurrentUserId()
 							+ " logged in.");
 		} catch (SQLException e1) {
-			System.out.println("An error has accured");
 			e1.printStackTrace();
 		} finally {
 			try {
@@ -104,16 +103,16 @@ public class Database {
 		PreparedStatement ps = null;
 
 		try {
-			
+
 			String sql = "Select nbrofseats from theater where theatername = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, theaterName);
 			ResultSet rs = ps.executeQuery();
-			
+
 			int nbrofseats = 0;
-			
+
 			if (rs.next()) {
-				 nbrofseats = rs.getInt("nbrofseats");
+				nbrofseats = rs.getInt("nbrofseats");
 			}
 			return nbrofseats;
 
@@ -129,24 +128,24 @@ public class Database {
 		}
 
 	}
-	
+
 	public Performance getDetails(String movieName, String date) {
-		
+
 		PreparedStatement ps = null;
 		Performance performance = null;
-		
+
 		try {
 			String sql = "select moviename, datum, theatername from performance where moviename = ? and datum = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, movieName);
 			ps.setString(2, date);
 			ResultSet rs = ps.executeQuery();
-			
-			
+
 			if (rs.next()) {
 				String theaterName = rs.getString("theaterName");
-				 performance = new Performance (rs.getString("datum"), rs.getString("movieName"), theaterName, getnbrOfSeats(theaterName));
-				System.out.println("SUCCESSSS");
+				performance = new Performance(rs.getString("datum"),
+						rs.getString("movieName"), theaterName,
+						getnbrOfSeats(theaterName));
 			}
 			return performance;
 
@@ -160,9 +159,9 @@ public class Database {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	public ArrayList<String> getMovies() {
 		PreparedStatement ps = null;
 
@@ -173,8 +172,6 @@ public class Database {
 			ArrayList<String> result = new ArrayList<String>();
 			while (rs.next()) {
 				result.add(rs.getString("movieName"));
-
-				System.out.println(rs.getString("movieName"));
 			}
 			return result;
 
@@ -193,7 +190,6 @@ public class Database {
 
 	public ArrayList<String> getDates(String moviename) {
 		PreparedStatement ps = null;
-		System.out.println("Selected movie is: " + moviename);
 		try {
 			String sql = "Select datum from performance where movieName = ?";
 			ps = conn.prepareStatement(sql);
@@ -219,10 +215,10 @@ public class Database {
 			}
 		}
 	}
-	
+
 	public int getNbrOfTickets(Performance perf) {
 		PreparedStatement ps = null;
-	int booked = 0;
+		int booked = 0;
 		try {
 			String sql = "Select count(*) as antal from ticket where movieName = ? and datum = ?";
 			ps = conn.prepareStatement(sql);
@@ -230,7 +226,7 @@ public class Database {
 			ps.setString(2, perf.getDate());
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				
+
 				booked = rs.getInt("antal");
 
 			}
@@ -239,13 +235,86 @@ public class Database {
 			e1.printStackTrace();
 			return (Integer) null;
 		} finally {
-			
+
 			try {
 				ps.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-	
+
+	}
+
+	public int lastresnbr() {
+
+		Integer lastresnbr = 0;
+		PreparedStatement ps = null;
+		try {
+			String sql = "select max(resnbr) as reservation from ticket";
+			ps = conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+
+				lastresnbr = rs.getInt("reservation");
+
+			}
+			return lastresnbr;
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return lastresnbr;
+		} finally {
+
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public int bookTicket(Performance perf) {
+		PreparedStatement ps = null;
+		Integer resnbr = 0;
+		try {
+			conn.setAutoCommit(false);
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		}
+		if (perf.nbrofSeats() > getNbrOfTickets(perf)) {
+			try {
+
+				String sql = "insert into Ticket values(0, ?, ?, ?)";
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, CurrentUser.instance().getCurrentUserId());
+				ps.setString(2, perf.getDate());
+				ps.setString(3, perf.getMovieName());
+				int result = ps.executeUpdate();
+				if (result == 1) {
+					return lastresnbr();
+				}
+				return resnbr;
+
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				return resnbr;
+			} finally {
+
+				try {
+					conn.commit();
+					conn.setAutoCommit(true);
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			try {
+				conn.rollback();
+				conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return resnbr;
+		}
 	}
 }

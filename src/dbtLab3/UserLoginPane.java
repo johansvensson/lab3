@@ -83,10 +83,11 @@ public class UserLoginPane extends BasicPane {
 		public void actionPerformed(ActionEvent e) {
 			String userId = fields[USER_ID].getText();
 			db.loginUser(userId);
-			
-			if(CurrentUser.instance().isLoggedIn()){
-				displayMessage("Logged in as: " + CurrentUser.instance().getCurrentUserId());
-			} else{
+
+			if (CurrentUser.instance().isLoggedIn()) {
+				displayMessage("Logged in as: "
+						+ CurrentUser.instance().getCurrentUserId());
+			} else {
 				displayMessage("Login failed, try again");
 			}
 		}
