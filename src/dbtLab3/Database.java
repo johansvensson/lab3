@@ -99,7 +99,7 @@ public class Database {
 			}
 		}
 	}
-// GAR ALDRIG IN PA DENNA I TRY METODEN... FAR NULLPOINTEREXCEPTION
+
 	public int getnbrOfSeats(String theaterName) {
 		PreparedStatement ps = null;
 

@@ -250,7 +250,11 @@ public class BookingPane extends BasicPane {
 			fields[2].setText(perf.getTheaterName());
 			
 			Integer available = (perf.nbrofSeats() - db.getNbrOfTickets(perf));
+			if (available < 1) {
+				fields[3].setText("Event fullbokat");
+			}else {
 			fields[3].setText(available.toString());
+		}
 		}
 	}
 
@@ -277,6 +281,9 @@ public class BookingPane extends BasicPane {
 			String movieName = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
 			/* --- insert own code here --- */
+			// put lock on whole session with "for update" 
+			// update number of available seats
+			
 		}
 	}
 }
