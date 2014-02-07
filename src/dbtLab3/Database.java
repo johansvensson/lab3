@@ -3,8 +3,6 @@ package dbtLab3;
 import java.sql.*;
 import java.util.ArrayList;
 
-import javax.swing.DefaultListModel;
-
 /**
  * Database is a class that specifies the interface to the movie database. Uses
  * JDBC and the MySQL Connector/J driver.
@@ -76,7 +74,7 @@ public class Database {
 	public void loginUser(String userId) {
 
 		PreparedStatement ps = null;
-		// Creates a PreparedStatemet from the String
+
 		try {
 			String sql = "select username,name from users where username = ?";
 			ps = conn.prepareStatement(sql);
@@ -87,9 +85,9 @@ public class Database {
 				CurrentUser.instance().loginAs(rs.getString("username"));
 			}
 			System.out
-					.println("Now is "
+					.println("User "
 							+ CurrentUser.instance().getCurrentUserId()
-							+ " logged in!");
+							+ " logged in.");
 		} catch (SQLException e1) {
 			System.out.println("An error has accured");
 			e1.printStackTrace();
@@ -100,14 +98,71 @@ public class Database {
 				e.printStackTrace();
 			}
 		}
+	}
+// GAR ALDRIG IN PA DENNA I TRY METODEN... FAR NULLPOINTEREXCEPTION
+	public int getnbrOfSeats(String theaterName) {
+		PreparedStatement ps = null;
+
+		try {
+			
+			String sql = "Select nbrofseats from theater where theatername = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, theaterName);
+			ResultSet rs = ps.executeQuery();
+			
+			int nbrofseats = 0;
+			
+			if (rs.next()) {
+				 nbrofseats = rs.getInt("nbrofseats");
+			}
+			return nbrofseats;
+
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return (Integer) null;
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
+	
+	public Performance getDetails(String movieName, String date) {
+		
+		PreparedStatement ps = null;
+		Performance performance = null;
+		
+		try {
+			String sql = "select moviename, datum, theatername from performance where moviename = ? and datum = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, movieName);
+			ps.setString(2, date);
+			ResultSet rs = ps.executeQuery();
+			
+			
+			if (rs.next()) {
+				String theaterName = rs.getString("theaterName");
+				 performance = new Performance (rs.getString("datum"), rs.getString("movieName"), theaterName, getnbrOfSeats(theaterName));
+				System.out.println("SUCCESSSS");
+			}
+			return performance;
 
-	/* --- insert own code here --- */
-	public Connection getConnection() {
-		return conn;
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return null;
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
-
+	
 	public ArrayList<String> getMovies() {
 		PreparedStatement ps = null;
 
@@ -164,43 +219,33 @@ public class Database {
 			}
 		}
 	}
-
-	public int getAvailableSeats(String moviename, String date) {
-
+	
+	public int getNbrOfTickets(Performance perf) {
 		PreparedStatement ps = null;
+	int booked = 0;
 		try {
-			String sql = "select count(resnbr) as booked, nbrofseats from ticket, theater where theatername = "+
-		"(select theatername from performance where moviename = ? and datum = ?) and moviename = ? and datum = ?";
-
+			String sql = "Select count(*) as antal from ticket where movieName = ? and datum = ?";
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, moviename);
-			ps.setString(2, date);
-			ps.setString(3, moviename);
-			ps.setString(4, date);
+			ps.setString(1, perf.getMovieName());
+			ps.setString(2, perf.getDate());
 			ResultSet rs = ps.executeQuery();
-			int result = 0;
 			if (rs.next()) {
-				result = rs.getInt("nbrofseats") - rs.getInt("booked");
-			}
-			return result;
+				
+				booked = rs.getInt("antal");
 
-		} catch (SQLException e1) {	
+			}
+			return booked;
+		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return (Integer) null;
 		} finally {
+			
 			try {
 				ps.close();
-			} catch (SQLException e) {	
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-
-	
-	public String getTheater(String moviename, String date){
-	
-	
-	
-	}
 	
 	}
 }

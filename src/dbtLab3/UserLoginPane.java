@@ -1,9 +1,7 @@
 package dbtLab3;
 
 import javax.swing.*;
-
 import java.awt.event.*;
-import java.sql.*;
 
 /**
  * The GUI pane where a new user logs in. Contains a text field where the user
@@ -84,19 +82,13 @@ public class UserLoginPane extends BasicPane {
 		 */
 		public void actionPerformed(ActionEvent e) {
 			String userId = fields[USER_ID].getText();
-					
-//			/* --- insert own code here --- */
-				db.loginUser(userId);	
-				
-				if(CurrentUser.instance().isLoggedIn()){
-					displayMessage("Logged in as: " + CurrentUser.instance().getCurrentUserId());
-				} else{
-					displayMessage("Login failed, try again");
-				}
-				
+			db.loginUser(userId);
+			
+			if(CurrentUser.instance().isLoggedIn()){
+				displayMessage("Logged in as: " + CurrentUser.instance().getCurrentUserId());
+			} else{
+				displayMessage("Login failed, try again");
 			}
-			
-			
 		}
 	}
-
+}

@@ -12,5 +12,17 @@ public class Performance {
 		this.theaterName = theaterName;
 		this.nbrOfSeats = nbrOfSeats;
 	}
-	
+	public String getDate () {
+		return date;
+	}
+	public String getMovieName() {
+		return movieName;
+		
+	}
+	public String getTheaterName() {
+		return theaterName;
+	}
+	public int nbrofSeats(){
+	return nbrOfSeats;
+	}
 }

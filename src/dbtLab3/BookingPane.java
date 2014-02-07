@@ -165,6 +165,7 @@ public class BookingPane extends BasicPane {
 		clearMessage();
 		currentUserNameLabel.setText(CurrentUser.instance().getCurrentUserId());
 		fillNameList();
+		clearFields();
 	}
 
 	/**
@@ -173,24 +174,22 @@ public class BookingPane extends BasicPane {
 	private void fillNameList() {
 		nameListModel.removeAllElements();
         /* --- insert own code here --- */
-		ArrayList<String> result = db.getMovies();
-		//TODO Fungerar ner hit. Listan result är bra, måste bara få in det i GUIt.
-		for(String n: result){
-			nameListModel.addElement(n);
+		ArrayList<String> movies = db.getMovies();
+		for (String s : movies){
+			nameListModel.addElement(s);
 		}
-		
 	}
 
 	/**
 	 * Fetch performance dates from the database and display them in the date
 	 * list.
 	 */
-	private void fillDateList(String moviename) {
+	private void fillDateList(String movieName) {
 		dateListModel.removeAllElements();
         /* --- insert own code here --- */
-		ArrayList<String> result = db.getDates(moviename);
-		for(String n: result){
-			dateListModel.addElement(n);
+		ArrayList<String> dates = db.getDates(movieName);
+		for (String d : dates){
+			dateListModel.addElement(d);
 		}
 	}
 
@@ -221,7 +220,7 @@ public class BookingPane extends BasicPane {
 			}
 			String movieName = nameList.getSelectedValue();
 			/* --- insert own code here --- */
-			fillDateList(nameList.getSelectedValue());
+			fillDateList(movieName);
 		}
 	}
 
@@ -230,7 +229,7 @@ public class BookingPane extends BasicPane {
 	 */
 	class DateSelectionListener implements ListSelectionListener {
 		/**
-		 * Called when the user selects a name in the date list. Fetches
+		 * Called when the user selects a date in the date list. Fetches
 		 * performance data from the database and displays it in the text
 		 * fields.
 		 * 
@@ -244,6 +243,14 @@ public class BookingPane extends BasicPane {
 			String movieName = nameList.getSelectedValue();
 			String date = dateList.getSelectedValue();
 			/* --- insert own code here --- */
+			clearFields();	
+			fields[0].setText(movieName);
+			fields[1].setText(date);
+			Performance perf = db.getDetails(movieName, date);
+			fields[2].setText(perf.getTheaterName());
+			
+			Integer available = (perf.nbrofSeats() - db.getNbrOfTickets(perf));
+			fields[3].setText(available.toString());
 		}
 	}
 
